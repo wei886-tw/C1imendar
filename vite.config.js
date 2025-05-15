@@ -10,7 +10,7 @@ export default defineConfig({
     vue(),
     vueDevTools()
   ],
-  base: '/C1imendar/'
+  base: '/C1imendar/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
