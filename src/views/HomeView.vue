@@ -254,7 +254,7 @@ export default {
   components: { NavbarView },
   data() {
     return {
-      apiKey: import.meta.env.VITE_API_KEY,
+      apiKey: import.meta.env.VITE_WEATHER_API_KEY,
       weatherDescription: null,
       temp: null,
       feelsLike: null, // 體感溫度
