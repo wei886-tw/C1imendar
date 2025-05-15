@@ -25,9 +25,15 @@
             </button>
           </router-link>
 
-            <router-link to="/privacy" class="d-block w-75">
+          <router-link to="/about" class="d-block w-75">
             <button class="btn btn-primary w-100 mb-24 rounded-5 text-white text-decoration-none">
-              Privacy
+              About
+            </button>
+          </router-link>
+
+          <router-link to="/privacy" class="d-block w-75">
+            <button class="btn btn-primary w-100 mb-24 rounded-5 text-white text-decoration-none">
+              Privacy Policy
             </button>
           </router-link>
         </div>

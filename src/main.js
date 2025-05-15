@@ -7,10 +7,8 @@ import App from './App.vue';
 import router from './router';
 
 // import Bootstrap 5
-import '../src/assets/all.scss';
+import './assets/all.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import 'bootstrap-icons/font/bootstrap-icons.css'; // needs additional webpack config!
-
 
 // import axios
 import axios from 'axios';

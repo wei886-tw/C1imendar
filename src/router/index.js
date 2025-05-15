@@ -4,6 +4,8 @@ import HomeView from '@/views/HomeView.vue';
 import CalendarView from '@/views/CalendarView.vue';
 import SignInView from '@/views/SignInView.vue';
 import PrivacyView from '@/views/PrivacyView.vue';
+import AboutView from '@/views/AboutView.vue';
+
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -32,6 +34,11 @@ const router = createRouter({
       path: '/privacy',
       name: 'privacy',
       component: PrivacyView,
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView,
     }
   ],
 });
