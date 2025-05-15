@@ -1,0 +1,30 @@
+name: 部署到 GitHub Pages
+
+on:
+  push:
+    branches: [ main ] # 或你使用的主分支名稱
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 檢出程式碼
+        uses: actions/checkout@v3
+
+      - name: 設置 Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: 安裝依賴
+        run: npm ci
+        
+      - name: 建置專案
+        run: npm run build
+        
+      - name: 部署到 GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: dist
+          clean: true # 清除目標分支上的舊檔案
