@@ -10,9 +10,9 @@
       <div class="col-md-6">
         <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
           <h1 class="fs-64 mb-24 ancizar-serif">Climendar</h1>
-          <p class="fs-24 fw-bold mb-60 border-top border-bottom py-24">
+          <!-- <p class="fs-24 fw-bold mb-24 border-top border-bottom py-24">
             Plan your day with weather insights!
-          </p>
+          </p> -->
 
           <div class="d-block w-50 mb-24">
             <div
@@ -20,26 +20,25 @@
               data-client_id="113193907332-b56f9ufbkq26svduhm10r9hctabge26o.apps.googleusercontent.com"
               data-ux_mode="redirect"
               data-login_uri="https://wei886-tw.github.io/C1imendar/#/"
+              class="link-hover-google-color"
             ></div>
             <div class="g_id_signin" data-type="standard"></div>
           </div>
 
-          <div class="container d-flex justify-content-center gap-80">
-            <router-link to="/about" class="d-block" style="width: 20%">
-              <button
-                class="btn btn-outline-google-color w-100 text-decoration-none text-dark fw-bold"
-              >
-                About
-              </button>
-            </router-link>
-            <router-link to="/privacy" class="d-block" style="width: 20%">
-              <button
-                class="btn btn-outline-google-color w-100 text-dark text-decoration-none fw-bold"
-              >
-                Privacy 
-              </button>
-            </router-link>
-          </div>
+          <router-link to="/about" class="d-block w-50 mb-24">
+            <button
+              class="btn btn-outline-google-color w-100 text-decoration-none text-dark fw-bold"
+            >
+              About
+            </button>
+          </router-link>
+          <router-link to="/privacy" class="d-block w-50">
+            <button
+              class="btn btn-outline-google-color w-100 text-dark text-decoration-none fw-bold"
+            >
+              Privacy
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -96,3 +95,4 @@ export default {
   },
 }
 </script>
+
