@@ -39,7 +39,12 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutView,
-    }
+    },
+    {
+      path: '/callback',
+      name: 'callback',
+      component: SignInView,
+    },
   ],
 });
 

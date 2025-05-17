@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid pt-60 ps-48">
     <p>
       Climendar 是一款結合天氣資訊與行事曆規劃的應用程式，協助您根據天氣狀況更有效率地安排每日行程。
     </p>

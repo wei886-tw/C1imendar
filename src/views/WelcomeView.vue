@@ -9,33 +9,37 @@
 
       <div class="col-md-6">
         <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
-          <h1 class="fs-64 mb-24">Climendar</h1>
+          <h1 class="fs-64 mb-24 ancizar-serif">Climendar</h1>
           <p class="fs-24 fw-bold mb-60 border-top border-bottom py-24">
             Plan your day with weather insights!
           </p>
-          <router-link to="/home" class="d-block w-75">
-            <button class="btn btn-primary w-100 mb-24 rounded-5 text-white text-decoration-none">
-              Start
-            </button>
-          </router-link>
 
-          <router-link to="/signin" class="d-block w-75">
-            <button class="btn btn-primary w-100 mb-24 rounded-5 text-white text-decoration-none">
-              Sign In With Google
-            </button>
-          </router-link>
+          <div class="d-block w-50 mb-24">
+            <div
+              id="g_id_onload"
+              data-client_id="113193907332-b56f9ufbkq26svduhm10r9hctabge26o.apps.googleusercontent.com"
+              data-ux_mode="redirect"
+              data-login_uri="https://wei886-tw.github.io/C1imendar/#/"
+            ></div>
+            <div class="g_id_signin" data-type="standard"></div>
+          </div>
 
-          <router-link to="/about" class="d-block w-75">
-            <button class="btn btn-primary w-100 mb-24 rounded-5 text-white text-decoration-none">
-              About
-            </button>
-          </router-link>
-
-          <router-link to="/privacy" class="d-block w-75">
-            <button class="btn btn-primary w-100 mb-24 rounded-5 text-white text-decoration-none">
-              Privacy Policy
-            </button>
-          </router-link>
+          <div class="container d-flex justify-content-center gap-80">
+            <router-link to="/about" class="d-block" style="width: 20%">
+              <button
+                class="btn btn-outline-google-color w-100 text-decoration-none text-dark fw-bold"
+              >
+                About
+              </button>
+            </router-link>
+            <router-link to="/privacy" class="d-block" style="width: 20%">
+              <button
+                class="btn btn-outline-google-color w-100 text-dark text-decoration-none fw-bold"
+              >
+                Privacy Policy
+              </button>
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -46,8 +50,49 @@
 export default {
   data() {
     return {
-      googleOauthClientIds: import.meta.env.VITE_GOOGLE_OAUTH2_CLIENT_IDS,
+      clientId: import.meta.env.VITE_GOOGLE_OAUTH2_CLIENT_ID,
+      redirectUri: 'https://wei886-tw.github.io/C1imendar/callback',
+      userInfo: null,
+      isActivate: false,
     }
+  },
+  methods: {
+    initializeGoogle() {
+      window.google.accounts.id.initialize({
+        client_id: this.clientId,
+        callback: this.handleCredentialResponse,
+      })
+      window.google.accounts.id.renderButton(document.getElementById('g_id_signin'), {
+        theme: 'outline',
+        size: 'large',
+      })
+    },
+
+    handleCredentialResponse(response) {
+      const jwt = response.credential
+      const base64Url = jwt.split('.')[1]
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      )
+      this.userInfo = JSON.parse(jsonPayload)
+    },
+  },
+  mounted() {
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.onload = () => {
+      window.handleCredentialResponse = (response) => {
+        this.handleCredentialResponse(response)
+      }
+      this.initializeGoogle()
+    }
+    document.head.appendChild(script)
+    this.isActivate = true
   },
 }
 </script>
