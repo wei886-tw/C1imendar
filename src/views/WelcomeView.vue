@@ -36,7 +36,7 @@
               <button
                 class="btn btn-outline-google-color w-100 text-dark text-decoration-none fw-bold"
               >
-                Privacy Policy
+                Privacy 
               </button>
             </router-link>
           </div>
