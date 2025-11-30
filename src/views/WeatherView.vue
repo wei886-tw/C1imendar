@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row flex-wrap">
       <div
-        class="d-none d-lg-block col-lg-1 border-end border-2 border-white shadow shadow-lg vh-100"
+        class="d-none d-lg-block col-lg-2 border-end border-2 border-white shadow shadow-lg vh-100"
       >
         <navbar-view></navbar-view>
       </div>

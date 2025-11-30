@@ -14,25 +14,19 @@
             Plan your day with weather insights!
           </p> -->
 
-          <div class="d-block w-50 mb-24">
-            <div
-              id="g_id_onload"
-              data-client_id="113193907332-b56f9ufbkq26svduhm10r9hctabge26o.apps.googleusercontent.com"
-              data-ux_mode="redirect"
-              data-login_uri="https://wei886-tw.github.io/C1imendar/#/"
-              class="link-hover-google-color"
-            ></div>
-            <div class="g_id_signin" data-type="standard"></div>
+          <div class="d-block w-50 mb-24 border border-2">
+            <GoogleLogin />
           </div>
 
-          <router-link to="/about" class="d-block w-50 mb-24">
+          <router-link to="/about" class="d-block w-50 mb-24  border border-1">
             <button
               class="btn btn-outline-google-color w-100 text-decoration-none text-dark fw-bold"
             >
               About
             </button>
           </router-link>
-          <router-link to="/privacy" class="d-block w-50">
+
+          <router-link to="/privacy" class="d-block w-50  border border-1">
             <button
               class="btn btn-outline-google-color w-100 text-dark text-decoration-none fw-bold"
             >
@@ -46,52 +40,123 @@
 </template>
 
 <script>
+import GoogleLogin from '../components/GoogleLogin.vue'
+import GoogleCalendarService from '../services/googleCalendar.js'
+import authService from '../services/authService.js'
+
 export default {
+  components: { GoogleLogin },
   data() {
     return {
-      clientId: import.meta.env.VITE_GOOGLE_OAUTH2_CLIENT_ID,
-      redirectUri: 'https://wei886-tw.github.io/C1imendar/callback',
-      userInfo: null,
-      isActivate: false,
+      isLoggedIn: false,
+      newTodo: '',
+      todos: [],
+      nextId: 1,
+      calendarEvents: [],
+      isLoadingCalendar: false,
+      calendarError: null,
     }
   },
   methods: {
-    initializeGoogle() {
-      window.google.accounts.id.initialize({
-        client_id: this.clientId,
-        callback: this.handleCredentialResponse,
-      })
-      window.google.accounts.id.renderButton(document.getElementById('g_id_signin'), {
-        theme: 'outline',
-        size: 'large',
-      })
+    async logout() {
+      try {
+        await authService.logout()
+        this.isLoggedIn = false
+        this.calendarEvents = []
+        this.todos = []
+        this.calendarError = null
+      } catch (error) {
+        console.error('登出失敗:', error)
+      }
     },
 
-    handleCredentialResponse(response) {
-      const jwt = response.credential
-      const base64Url = jwt.split('.')[1]
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      )
-      this.userInfo = JSON.parse(jsonPayload)
+    addTodo() {
+      if (this.newTodo.trim() && this.isLoggedIn) {
+        this.todos.push({
+          id: this.nextId++,
+          text: this.newTodo.trim(),
+          completed: false,
+        })
+        this.newTodo = ''
+      }
+    },
+
+    removeTodo(id) {
+      this.todos = this.todos.filter((todo) => todo.id !== id)
+    },
+
+    async loadTodaysCalendarEvents() {
+      if (!this.isLoggedIn) return
+
+      this.isLoadingCalendar = true
+      this.calendarError = null
+
+      try {
+        await GoogleCalendarService.init()
+
+        let calendarEvents = []
+        try {
+          calendarEvents = await GoogleCalendarService.getTodaysEvents()
+        } catch (err) {
+          if (err.message.includes('Google Calendar access token is missing')) {
+            try {
+              await GoogleCalendarService.ensureCalendarAccess()
+              calendarEvents = await GoogleCalendarService.getTodaysEvents()
+            } catch (accessErr) {
+              console.error('Failed to get calendar access:', accessErr)
+              this.calendarError = '無法取得 Google 日曆授權，請確認已允許彈出視窗並重試。'
+              return
+            }
+          } else {
+            console.error('載入日曆事件失敗:', err)
+            this.calendarError = '載入日曆事件失敗，請稍後再試'
+            return
+          }
+        }
+
+        this.calendarEvents = calendarEvents
+
+        const calendarTodos = calendarEvents.map((event) =>
+          GoogleCalendarService.formatEventForTodo(event)
+        )
+
+        this.todos = [...this.todos.filter((todo) => !todo.isCalendarEvent), ...calendarTodos]
+      } catch (error) {
+        console.error('載入日曆事件失敗:', error)
+        this.calendarError = '載入日曆事件失敗，請稍後再試'
+      } finally {
+        this.isLoadingCalendar = false
+      }
+    },
+
+    formatEventTime(dateTime) {
+      if (!dateTime) return ''
+
+      const date = new Date(dateTime.dateTime || dateTime.date)
+
+      if (dateTime.date) {
+        return '全天'
+      } else {
+        return date.toLocaleTimeString('zh-TW', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })
+      }
     },
   },
+
   mounted() {
-    const script = document.createElement('script')
-    script.src = 'https://accounts.google.com/gsi/client'
-    script.async = true
-    script.onload = () => {
-      window.handleCredentialResponse = (response) => {
-        this.handleCredentialResponse(response)
+    authService.onAuthStateChanged((user) => {
+      this.isLoggedIn = !!user
+      if (this.isLoggedIn) {
+        this.loadTodaysCalendarEvents()
+      } else {
+        this.calendarEvents = []
+        this.todos = []
+        this.calendarError = null
       }
-      this.initializeGoogle()
-    }
-    document.head.appendChild(script)
-    this.isActivate = true
+    })
   },
 }
 </script>
